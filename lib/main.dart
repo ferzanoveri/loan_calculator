@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(MaterialApp(
@@ -28,10 +26,11 @@ class _HomePageState extends State<HomePage> {
   void loanCalculation(){
     final amount = int.parse(_controller1.text) - int.parse(_controller2.text);
     final tinterest = amount * (double.parse(_controller3.text) / 100) * int.parse(selected!);
+    final minterest = tinterest/(int.parse(selected!) * 12);
     final minstall = (amount + tinterest) / (int.parse(selected!) * 12);
     setState(() {
       totalInterest = tinterest;
-      monthlyInterest = monthlyInterest;
+      monthlyInterest = minterest;
       monthlyInstallment = minstall;
     });
   }
@@ -107,9 +106,9 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              InputFotm(title: 'Car Price', hintText: 'e.g 90000', controller: _controller1),
-              InputFotm(title: 'Down Payment', hintText: 'e.g 9000', controller: _controller2),
-              InputFotm(title: 'Interest Rate', hintText: 'e.g .5', controller: _controller3),
+              InputForm(title: 'Car Price', hintText: 'e.g 90000', controller: _controller1),
+              InputForm(title: 'Down Payment', hintText: 'e.g 9000', controller: _controller2),
+              InputForm(title: 'Interest Rate', hintText: 'e.g 3.5', controller: _controller3),
               Text(
                 'Loan Period',
                 style: GoogleFonts.robotoMono(fontSize: 20),
@@ -136,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(height: 50,),
                 GestureDetector(
                   onTap: (){
-                    // loanCalculation();
-                    // Future.delayed(Duration.zero);
+                    loanCalculation();
+                    Future.delayed(Duration.zero);
                     showModalBottomSheet(
                       isDismissible: false,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30))),
@@ -151,7 +150,14 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Result')
+                              Text(
+                                'Result',
+                                style: GoogleFonts.robotoMono(fontSize: 20),
+                              ),
+                              SizedBox(height: 15,),
+                              Result(title: 'Total Interest', amount: totalInterest!),
+                              Result(title: 'Monthly Interest', amount: monthlyInterest!),
+                              Result(title: 'Monthly Installment', amount: monthlyInstallment!)
                             ],
                           ),
                         ),
@@ -181,6 +187,22 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget Result({required String title, required double amount}){
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 20),
+      ),
+      trailing: Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: Text(
+          'Rp${amount.toStringAsFixed(2)}',
+          style: TextStyle(fontSize: 19)
+        ),
+      ),
+    );
+  }
+
   Widget loanPeriod(String title){
     return GestureDetector(
       onTap: (){
@@ -204,7 +226,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget InputFotm({required String title, required TextEditingController controller ,required String hintText}) {
+  Widget InputForm({required String title, required TextEditingController controller ,required String hintText}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
