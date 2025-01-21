@@ -157,7 +157,30 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(height: 15,),
                               Result(title: 'Total Interest', amount: totalInterest!),
                               Result(title: 'Monthly Interest', amount: monthlyInterest!),
-                              Result(title: 'Monthly Installment', amount: monthlyInstallment!)
+                              Result(title: 'Monthly Installment', amount: monthlyInstallment!),
+                              SizedBox(height: 20,),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.of(context).pop();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Container(
+                                    height: 60,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: Colors.yellow,
+                                        borderRadius: BorderRadius.circular(25)
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        'Recalculate',
+                                        style: GoogleFonts.robotoMono(fontSize: 20),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
