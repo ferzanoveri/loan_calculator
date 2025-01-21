@@ -1,6 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(MaterialApp(
@@ -16,6 +16,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  TextEditingController _controller1 = new TextEditingController();
+  TextEditingController _controller2 = new TextEditingController();
+  TextEditingController _controller3 = new TextEditingController();
+  String? selected;
+  double? totalInterest;
+  double? monthlyInterest;
+  double? monthlyInstallment;
+
+  void loanCalculation(){
+    final amount = int.parse(_controller1.text) - int.parse(_controller2.text);
+    final tinterest = amount * (double.parse(_controller3.text) / 100) * int.parse(selected!);
+    final minstall = (amount + tinterest) / (int.parse(selected!) * 12);
+    setState(() {
+      totalInterest = tinterest;
+      monthlyInterest = monthlyInterest;
+      monthlyInstallment = minstall;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +57,12 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Body(),
+      body: ListView(
+        children: [
+          Body(),
+          SizedBox(height: 30)
+        ],
+      ) ,
     );
   }
 
@@ -77,17 +102,116 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(height: 20),
-          InputFotm()
+          Padding(
+            padding: const EdgeInsets.fromLTRB(30, 10, 40, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              InputFotm(title: 'Car Price', hintText: 'e.g 90000', controller: _controller1),
+              InputFotm(title: 'Down Payment', hintText: 'e.g 9000', controller: _controller2),
+              InputFotm(title: 'Interest Rate', hintText: 'e.g .5', controller: _controller3),
+              Text(
+                'Loan Period',
+                style: GoogleFonts.robotoMono(fontSize: 20),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    loanPeriod('1'),
+                    loanPeriod('2'),
+                    loanPeriod('3'),
+                    loanPeriod('4'),
+                    loanPeriod('5')
+                  ],
+                ),
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    loanPeriod('6'),
+                    loanPeriod('7'),
+                    loanPeriod('8'),
+                    loanPeriod('9'),
+                  ],
+                ),
+                SizedBox(height: 50,),
+                GestureDetector(
+                  onTap: (){
+                    // loanCalculation();
+                    // Future.delayed(Duration.zero);
+                    showModalBottomSheet(
+                      isDismissible: false,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topRight: Radius.circular(30), topLeft: Radius.circular(30))),
+                      context: context,
+                      builder: (BuildContext context){
+                      return Container(
+                        height: 400,
+                        width: double.infinity,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Result')
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+                  },
+                  child: Container(
+                    height: 60,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.yellow,
+                      borderRadius: BorderRadius.circular(25)
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Calculate',
+                        style: GoogleFonts.robotoMono(fontSize: 20),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget InputFotm() {
+  Widget loanPeriod(String title){
+    return GestureDetector(
+      onTap: (){
+        setState(() {
+          selected = title;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 2, 20, 0),
+        child: Container(
+          height: 40,
+          width: 40,
+          decoration: BoxDecoration(
+            border: title == selected ? Border.all(color: Colors.red, width: 2): null,
+            color: Colors.yellow,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Center(child: Text(title)),
+        ),
+      ),
+    );
+  }
+
+  Widget InputFotm({required String title, required TextEditingController controller ,required String hintText}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Testing'),
+        Text(
+          title,
+          style: GoogleFonts.robotoMono(fontSize: 20),
+        ),
         SizedBox(height: 5),
         Container(
           height: 60,
@@ -96,13 +220,17 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: TextField(
+            controller: controller,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide.none
                 ),
-                hintText: 'Testing hinttext'
+                hintText: hintText
             ),
           ),
+        ),
+        SizedBox(
+          height: 10,
         )
       ],
     );
